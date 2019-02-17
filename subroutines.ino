@@ -18,6 +18,3 @@ void printTemp(void) {
     delay(250);
 }
 
-
-
-// this is just some fake code
