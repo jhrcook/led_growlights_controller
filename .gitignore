@@ -1,0 +1,4 @@
+.DS_Store
+*.ino.standard.hex
+*.ino.with_bootloader.standard.hex
+
