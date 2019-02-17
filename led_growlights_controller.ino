@@ -36,12 +36,10 @@ void setup() {
     display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
     display.clearDisplay();
     display.display();
+    mySplashScreen();
     
     // begin one-wire temp sensor
     sensors.begin();
-    
-    Serial.begin(9600);
-    delay(3000);
     
 //    if (rtc.lostPower()) {
 //        Serial.println("RTC lost power, lets set the time!");
@@ -51,6 +49,9 @@ void setup() {
     
     // declare IO
     pinMode(buttonPin, INPUT);
+
+    // delay to allow the lights to be plugged in
+    delay(3000);
 }
 
 void loop() {
@@ -58,7 +59,7 @@ void loop() {
     DateTime now = rtc.now();
     
     // print the current temperature
-    printTemp(now, gl.getOverrideStatus());
+    printScreen(now, gl.getOverrideStatus());
     
     // builtin-led ON/OFF according to over-ride status
     digitalWrite(LED_BUILTIN, gl.getOverrideStatus());
