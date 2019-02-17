@@ -1,6 +1,6 @@
 
 // print the temperature to the OLED display
-void printTemp(DateTime dt, bool or_status) {
+void printScreen(DateTime dt, bool or_status) {
     // call sensors.requestTemperatures() to issue a global temperature
     // request to all devices on the bus
     sensors.requestTemperatures(); // Send the command to get temperature readings

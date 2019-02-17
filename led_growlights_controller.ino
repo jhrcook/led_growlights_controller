@@ -40,9 +40,6 @@ void setup() {
     // begin one-wire temp sensor
     sensors.begin();
     
-    Serial.begin(9600);
-    delay(3000);
-    
 //    if (rtc.lostPower()) {
 //        Serial.println("RTC lost power, lets set the time!");
 //        // following line sets the RTC to the date & time this sketch was compiled
@@ -51,6 +48,9 @@ void setup() {
     
     // declare IO
     pinMode(buttonPin, INPUT);
+
+    // pause before starting to control the lights
+    delay(3000);
 }
 
 void loop() {
@@ -58,7 +58,7 @@ void loop() {
     DateTime now = rtc.now();
     
     // print the current temperature
-    printTemp(now, gl.getOverrideStatus());
+    printScreen(now, gl.getOverrideStatus());
     
     // builtin-led ON/OFF according to over-ride status
     digitalWrite(LED_BUILTIN, gl.getOverrideStatus());
