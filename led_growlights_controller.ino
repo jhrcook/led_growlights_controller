@@ -54,24 +54,20 @@ void setup() {
 }
 
 void loop() {
+    // print useful info. to Serial
+    DateTime now = rtc.now();
+    
     // print the current temperature
-    printTemp();
+    printTemp(now, gl.getOverrideStatus());
     
     // builtin-led ON/OFF according to over-ride status
     digitalWrite(LED_BUILTIN, gl.getOverrideStatus());
-    
-    // print useful info. to Serial
-    DateTime now = rtc.now();
-    Serial.print("hour: ");
-    Serial.print(now.hour());
-    Serial.print("\tminute: ");
-    Serial.println(now.minute());
     
     // check the current time against the time limits
     gl.updateLights(now.hour());
     
     // check time every 15 sec, otherwise look for button presses
-    int checkTimeDelay = 15000;
+    int checkTimeDelay = 2000;
     unsigned long start_timer = millis();
     unsigned long end_timer = start_timer;
     while(end_timer >= start_timer && checkTimeDelay > (end_timer - start_timer)) {
