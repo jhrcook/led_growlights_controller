@@ -50,7 +50,7 @@ void setup() {
     // declare IO
     pinMode(buttonPin, INPUT);
 
-    // delay to allow the lights to be plugged in
+    // pause before starting to control the lights
     delay(3000);
 }
 
