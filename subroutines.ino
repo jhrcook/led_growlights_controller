@@ -24,9 +24,10 @@ void printScreen(DateTime dt, bool or_status) {
     display.println(" F");
 
     // line 2: time
+    String adj_minute = adjustMinuteString(dt.minute());
     display.print(dt.hour(), DEC);
     display.print(":");
-    display.println(dt.minute(), DEC);
+    display.println(adj_minute);
 
     // line 3: date
     display.print(dt.month(), DEC);
@@ -39,6 +40,33 @@ void printScreen(DateTime dt, bool or_status) {
     display.print(or_string);
 
     // print to screen
+    display.display();
+    delay(100);
+}
+
+// add a leading 0 to the minute if necessary
+String adjustMinuteString(int input_minute) {
+    if (input_minute < 10) {
+        return(String("0" + String(input_minute, DEC)));
+    } else {
+        return(String(input_minute, DEC));
+    }
+}
+
+// a quick message to display upon start up
+void mySplashScreen() {
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setTextColor(WHITE);
+    display.setCursor(0,0);
+
+    display.println();
+    display.println("LED Growlight");
+    display.println();
+    display.println("by Josh Cook");
+    display.println();
+    display.println("starting...");
+
     display.display();
     delay(100);
 }

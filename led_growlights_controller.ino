@@ -36,6 +36,7 @@ void setup() {
     display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
     display.clearDisplay();
     display.display();
+    mySplashScreen();
     
     // begin one-wire temp sensor
     sensors.begin();
