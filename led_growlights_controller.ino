@@ -2,8 +2,8 @@
 #include <DallasTemperature.h>
 #include <Wire.h>
 #include <RTClib.h>
-#include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include "GrowLight.h"
 
 // initiate RTC module object
 RTC_DS3231 rtc;
@@ -23,6 +23,8 @@ OneWire oneWire(ONE_WIRE_BUS);
 // Pass our oneWire reference to Dallas Temperature.
 DallasTemperature sensors(&oneWire);  // Pass our oneWire reference to Dallas Temperature.
 
+// self-defined grow-lights object
+GrowLight gl(relayPin, 10, 22);
 
 void setup() {
     pinMode(LED_BUILTIN, OUTPUT);
@@ -46,28 +48,17 @@ void setup() {
 //        // following line sets the RTC to the date & time this sketch was compiled
 //        rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
 //    }
-
+    
     // declare IO
     pinMode(buttonPin, INPUT);
-    pinMode(relayPin, OUTPUT);
-    digitalWrite(relayPin, HIGH);
-
-    // print current temperature at the beginning
-    printTemp();
 }
 
-// current ON/OFF status of lights
-bool lightStatus = false;
-// if over-ride button is pressed
-bool lightOverRide = false;
-
-// time for lights on and off
-int lightsOnHr = 10;   // turns ON at 10 am
-int lightsOffHr = 22;  // turns OFF at 10 pm
-
 void loop() {
+    // print the current temperature
+    printTemp();
+    
     // builtin-led ON/OFF according to over-ride status
-    digitalWrite(LED_BUILTIN, lightOverRide);
+    digitalWrite(LED_BUILTIN, gl.getOverrideStatus());
     
     // print useful info. to Serial
     DateTime now = rtc.now();
@@ -77,62 +68,22 @@ void loop() {
     Serial.println(now.minute());
     
     // check the current time against the time limits
-    if (!lightOverRide) {
-        if ((now.hour() >= lightsOnHr & now.hour() < lightsOffHr) & !lightStatus) {
-            switchLights(true);
-        } else if ((now.hour() < lightsOnHr | now.hour() >= lightsOffHr) & lightStatus) {
-            switchLights(false);
-        }
-    }
+    gl.updateLights(now.hour());
     
     // check time every 15 sec, otherwise look for button presses
     int checkTimeDelay = 15000;
     unsigned long start_timer = millis();
-    delay(10);
-    unsigned long end_timer = millis();
-    while(end_timer > start_timer & checkTimeDelay > (end_timer - start_timer)) {
+    unsigned long end_timer = start_timer;
+    while(end_timer >= start_timer && checkTimeDelay > (end_timer - start_timer)) {
         int buttonState = digitalRead(buttonPin);
         if (buttonState == HIGH) {
-            lightOverRide = !lightOverRide;
-            switchLights(!lightStatus);
+            gl.overrideLights(now.hour());
             Serial.println("button pressed");
-            digitalWrite(LED_BUILTIN, lightOverRide);
+            digitalWrite(LED_BUILTIN, gl.getOverrideStatus());
             delay(500);
+            break;
         }
         delay(50);
         end_timer = millis();
     }
-
-    printTemp();  // update OLED display with current temp
-}
-
-// turn lights ON (true) or OFF (false)
-void switchLights(bool new_status) {
-    if (new_status) {
-        Serial.println("\t--- Turning lights ON ---");
-        digitalWrite(relayPin, LOW);
-        lightStatus = new_status;
-    } else {
-        Serial.println("\t--- Turning lights OFF ---");
-        digitalWrite(relayPin, HIGH);
-        lightStatus = new_status;
-    }
-}
-
-void printTemp(void) {
-    // call sensors.requestTemperatures() to issue a global temperature
-    // request to all devices on the bus
-    sensors.requestTemperatures(); // Send the command to get temperature readings
-    float ftemp = sensors.getTempFByIndex(0);  // 0 refers to the first IC on the wire
-    // display on OLED
-    display.clearDisplay();
-    display.setTextSize(2);
-    display.setTextColor(WHITE);
-    display.setCursor(0,0);
-    display.println("TEMP.");
-    display.println();
-    display.print(ftemp);
-    display.println(" F");
-    display.display();
-    delay(250);
 }
