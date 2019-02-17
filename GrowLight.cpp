@@ -23,7 +23,7 @@ void GrowLight::updateLights(int current_hour) {
     if (!overrideStatus) {
         if (onHour <= current_hour && current_hour < offHour && !lightStatus) {
             switchLightsOnOff(true);
-        } else if (current_hour < onHour && offHour <= current_hour && lightStatus) {
+        } else if ((current_hour < onHour | offHour <= current_hour) && lightStatus) {
             switchLightsOnOff(false);
         }
     }
