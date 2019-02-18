@@ -1,4 +1,4 @@
-# led\_growlights\_controller
+# led\_growlights\_controller [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **author: Joshua Cook**
 
